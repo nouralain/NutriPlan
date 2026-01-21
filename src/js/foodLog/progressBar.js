@@ -14,16 +14,11 @@ export default function setProgressBar(){
     .join("-");
     mealNutriMax
     Object.keys(logItems).forEach((day) => {
-        console.log(logItems[day],toDayDate,day);
         if(day===toDayDate){
          let {meals, ...totals}= logItems[day]
-         console.log(totals);
          
          Object.entries(totals).forEach((key)=>{
-          console.log(key[0].split("total").slice(1).join(""));
-          console.log(key[1]);
           let formatedKey=key[0].split("total").slice(1).join("")
-          console.log(key[1] / mealNutriMax[formatedKey]*100);
           let calcWidth= key[1] / mealNutriMax[formatedKey.toLocaleLowerCase()]*100
           cartona+=`<div class="bg-gray-50 rounded-xl p-4">
                 <div class="flex items-center justify-between mb-2">
@@ -89,7 +84,7 @@ if (Math.ceil(calcWidth) >= 100) {
    return   textColor = "text-purple-700";
       
     case "Carbs":
-    return  textColor = "text-amber-700";
+    return  textColor = "text-amber-600";
       
    
   }

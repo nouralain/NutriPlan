@@ -40,7 +40,10 @@ export default class FoodLog {
 `;
   };
 
-  
+  handleDeleteItems =()=>{
+    console.log(target);
+    
+  }
 
  
 }

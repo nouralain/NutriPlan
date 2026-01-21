@@ -10,7 +10,9 @@ export default class Product {
     this.lookUp = document.getElementById("lookup-barcode-btn");
     this.productByBarcode = []; //array of filtered products by barcode
     this.currentProducts = [];
+    this.productByCategory=[]
     this.productCardClick();
+    this.filterByCategories()
   }
 
   // ============ Get product data from the value in search input========================================
@@ -50,7 +52,22 @@ export default class Product {
     }
   };
   // =========================================================================================================
-
+  getProductByCategory = async(category)=>{
+     try {
+      let resp = await fetch(
+        `https://nutriplan-api.vercel.app/api/products/category/${category}`,
+      );
+      if (resp.ok === false) {
+        throw new Error(`Request failed with status ${resp.status}`);
+      } else {
+        //100% data recived
+        let data = await resp.json();
+        return (this.productByCategory = data.results);
+      }
+    } catch (error) {
+      console.error("fetchMeals error:", error.message);
+    }
+  }
   // =================Called in main when user search=========================================================
   handleSearchName = () => {
     // ===================== 1 (remove empty div when user search)===============================================
@@ -80,12 +97,12 @@ export default class Product {
           //5- show container div to display the new products in it
           this.productContainer.classList.remove("hidden");
           //6- display the searched products
-          this.displayProduct(this.currentProducts, this.productSearchInput);
+          this.displayProduct(this.currentProducts, this.productSearchInput.value);
         }, 2000);
         //7- add functionality to filter btns
-        this.filterByGrade(this.productByName, this.productSearchInput);
+        this.filterByGrade(this.productByName, this.productSearchInput.value);
         // 8- add fuunctionality to category btns
-        // this.filterByCategories()
+         
       }
       // =======================================================================================================
     });
@@ -108,8 +125,7 @@ export default class Product {
           document.getElementById("products-loading").classList.add("hidden");
           this.productContainer.classList.remove("hidden");
           // this responsible for displaing product and create and open the modal at same time
-          this.displayProduct(this.currentProducts, this.barcodeInput);
-          console.log(this.productByBarcode,this.currentProducts);
+          this.displayProduct(this.currentProducts, this.barcodeInput.value);
           
           this.createProductModalFromObj(this.productByBarcode[0]);
         }, 2000);
@@ -240,7 +256,7 @@ export default class Product {
       .join("");
     this.productContainer.innerHTML = prodDesign;
     document.getElementById("products-count").innerText =
-      `Found ${array.length} products for "${input.value}"`;
+      `Found ${array.length} products for "${input}"`;
   };
   // ============================================================================================================
 
@@ -248,7 +264,6 @@ export default class Product {
   filterByGrade = (array, input) => {
     document.querySelectorAll(".nutri-score-filter").forEach((filterBtn) => {
       //1 btn
-
       filterBtn.addEventListener("click", () => {
         document.querySelectorAll(".nutri-score-filter").forEach((btn) => {
           btn.classList.remove("ring-2", "ring-gray-900");
@@ -269,7 +284,28 @@ export default class Product {
     });
   };
 // =============================================================================================================
+filterByCategories=()=>{
 
+document.querySelectorAll(".product-category-btn").forEach((btn)=>{
+      document.getElementById("products-empty").classList.remove("hidden");
+
+  btn.addEventListener("click",async()=>{
+ const category =btn.innerText.toLowerCase()
+   this.productContainer.classList.add("hidden");
+        document.getElementById("products-empty").classList.add("hidden");
+        document.getElementById("products-loading").classList.remove("hidden");
+   const prodByCategory= await this.getProductByCategory(category)
+   setTimeout(() => {
+             document.getElementById("products-loading").classList.add("hidden");
+          this.productContainer.classList.remove("hidden");
+
+          // this responsible for displaing product and create and open the modal at same time
+this.displayProduct(this.productByCategory, btn.innerText);
+                  }, 2000);
+   
+  })
+})
+}
 // ==============function open and create modal when product is clicked => called in PRODUCT CARD CLICK
   handleModalOpen = (target, array) => {
     if (target.closest(".product-card")) {

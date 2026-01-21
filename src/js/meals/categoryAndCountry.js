@@ -3,6 +3,7 @@ import displayRecipes from "./displayMeals.js";
 import handleTotalMeals from "./numbersOfMeals.js";
 import showMealInfo from "./meals-info.js";
 
+
 // ============================================
 // class handles:
 // 1-fetching data of category or country => depending on the endpoint sent when object created
@@ -16,6 +17,7 @@ export default class CategoriesِAndCountries {
     this.filterdArray = [];
     this.currentMeals = [];
     this.recipesClick()
+    
   }
   //method fetch api of categories or countries
   // => called in display
@@ -164,6 +166,7 @@ export default class CategoriesِAndCountries {
         handleTotalMeals(this.filterdArray);
       });
     });
+   
   };
 
   // responsible for opening meal info => prevent duplicate event listner

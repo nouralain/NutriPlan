@@ -3,14 +3,14 @@ import setProgressBar from './../foodLog/progressBar.js';
 
 export let servingsValue = 1;
 export const mealNutriMax = {
-    calories: 2000,
-    protein: 50,
-    fat: 65,
-    carbs: 250,
-    sugar: 20,
-    fiber: 10,
-    saturatedFat: 20,
-  };
+  calories: 2000,
+  protein: 50,
+  fat: 65,
+  carbs: 250,
+  sugar: 20,
+  fiber: 10,
+  saturatedFat: 20,
+};
 // =====================================================================
 // dynamic method to show meal info when user clicked on any meal =>in all meal classes
 // main function
@@ -238,7 +238,6 @@ export default async function showMealInfo(allDataArray, e) {
       updateNutri(rawData);
       let selectedMeal = meal;
       let nutrients = rawData.data.perServing;
-      
 
       //everything related to LOG btn => creating modal & displaying it & handling modal inner btns
       handleLogBtn(nutrients, name, thumbnail, selectedMeal);
@@ -314,7 +313,7 @@ function updateNutri(nutriData) {
   const caloriesContainer = document.getElementById("hero-calories");
   const logBtn = document.getElementById("log-meal-btn");
   // to get the width of each bar
-  
+
   // to change the style of log btn when data recived
   logBtn.classList.add("hover:bg-blue-700");
   logBtn.classList.remove("cursor-not-allowed");
@@ -576,17 +575,17 @@ function handleInnerModalBtns(nutriData, selectedMeal, modal) {
   confirmBtn.addEventListener("click", () => {
     // send the logged item to foodlog section
 
-    displayLoggedItems(nutriData, selectedMeal, modal,servingsValue);
+    displayLoggedItems(nutriData, selectedMeal, modal, servingsValue);
   });
   // ===========================================================================
 }
 
 //=============== function display logged meal into foodLog section======
 // store meal data in local storage
-function displayLoggedItems(nutriData, selectedMeal, modal,servingsValue) {
-    const LogContainer=document.getElementById("logged-items-container")
+function displayLoggedItems(nutriData, selectedMeal, modal, servingsValue) {
+  const LogContainer = document.getElementById("logged-items-container");
 
-    LogContainer.innerHTML = "";
+  LogContainer.innerHTML = "";
 
   // store time now => to be added in the localStorage object
   const timeAdded = new Date().toLocaleString("en-US", {
@@ -619,7 +618,7 @@ function displayLoggedItems(nutriData, selectedMeal, modal,servingsValue) {
   // if there are data in the local storage put it in logItems , if not build the object
   if (localStorage.getItem("nutriplan_daily_log")) {
     let logItems = JSON.parse(localStorage.getItem("nutriplan_daily_log")); //log items= {01-20-2026: {totalProtein: 23, totalFat: 14, totalCarbs: 65, totalCalories: 411, meals: [,…]}}
-    // condition to check if logItems[key] not available build a new date key 
+    // condition to check if logItems[key] not available build a new date key
     if (!logItems[timeInDays]) {
       logItems[timeInDays] = {
         totalProtein: 0,
@@ -632,17 +631,19 @@ function displayLoggedItems(nutriData, selectedMeal, modal,servingsValue) {
     // push the main object to the date key in meals
     logItems[timeInDays].meals.push(allInfoOfMeals);
     // update total nutrients
-logItems[timeInDays].totalProtein += allInfoOfMeals.protein*servingsValue;
-    logItems[timeInDays].totalFat += allInfoOfMeals.fat*servingsValue;
-    logItems[timeInDays].totalCarbs += allInfoOfMeals.carbs*servingsValue;
-    logItems[timeInDays].totalCalories += allInfoOfMeals.calories*servingsValue;
-    //remove the modal automatically 
+    logItems[timeInDays].totalProtein += allInfoOfMeals.protein * servingsValue;
+    logItems[timeInDays].totalFat += allInfoOfMeals.fat * servingsValue;
+    logItems[timeInDays].totalCarbs += allInfoOfMeals.carbs * servingsValue;
+    logItems[timeInDays].totalCalories +=
+      allInfoOfMeals.calories * servingsValue;
+    //remove the modal automatically
     modal.remove();
     // set the new data in the local storage
     localStorage.setItem("nutriplan_daily_log", JSON.stringify(logItems));
     // display the new data
     renderLoggedItems(logItems[timeInDays].meals);
-  } else {  //if local storage have no keys
+  } else {
+    //if local storage have no keys
     //1- build the object to push in
     let logItems = {};
     {
@@ -654,17 +655,31 @@ logItems[timeInDays].totalProtein += allInfoOfMeals.protein*servingsValue;
         meals: [],
       };
     }
+    const clearBtn = document.createElement("button");
+  clearBtn.classList.add(
+    "text-red-500",
+    "hover:text-red-600",
+    "text-sm",
+    "font-medium",
+  );
+  clearBtn.id = "clear-foodlog";
+  document.getElementById("log-count-and-clear-parent").appendChild(clearBtn);
+  clearBtn.innerHTML = `
+                                    <i class="mr-1" data-fa-i2svg=""><svg class="svg-inline--fa fa-trash" data-prefix="fas" data-icon="trash" role="img" viewBox="0 0 448 512" aria-hidden="true" data-fa-i2svg=""><path fill="currentColor" d="M136.7 5.9L128 32 32 32C14.3 32 0 46.3 0 64S14.3 96 32 96l384 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0-8.7-26.1C306.9-7.2 294.7-16 280.9-16L167.1-16c-13.8 0-26 8.8-30.4 21.9zM416 144L32 144 53.1 467.1C54.7 492.4 75.7 512 101 512L347 512c25.3 0 46.3-19.6 47.9-44.9L416 144z"></path></svg></i>Clear All
+                                `;
+  
     // 2- push the data of the logged item in the object
     logItems[timeInDays].meals.push(allInfoOfMeals);
     // 3- store total nutri info => increase it from the extracted keys
-    logItems[timeInDays].totalProtein += allInfoOfMeals.protein*servingsValue;
-    logItems[timeInDays].totalFat += allInfoOfMeals.fat*servingsValue;
-    logItems[timeInDays].totalCarbs += allInfoOfMeals.carbs*servingsValue;
-    logItems[timeInDays].totalCalories += allInfoOfMeals.calories*servingsValue;
+    logItems[timeInDays].totalProtein += allInfoOfMeals.protein * servingsValue;
+    logItems[timeInDays].totalFat += allInfoOfMeals.fat * servingsValue;
+    logItems[timeInDays].totalCarbs += allInfoOfMeals.carbs * servingsValue;
+    logItems[timeInDays].totalCalories +=
+      allInfoOfMeals.calories * servingsValue;
     // 4- put the final result in the local storage
     localStorage.setItem("nutriplan_daily_log", JSON.stringify(logItems));
     //5- remove the modal
-     modal.remove();
+    modal.remove();
     //6- display all data
     renderLoggedItems(logItems[timeInDays].meals);
   }
@@ -672,23 +687,40 @@ logItems[timeInDays].totalProtein += allInfoOfMeals.protein*servingsValue;
 // =======================================================================
 
 //===============function invoked at the start of the website=============
-// to check if there are data in the 
+// to check if there are data in the
 export function displayoggedItemsAtStart() {
-  if(localStorage.getItem("nutriplan_daily_log")){
-        const LogContainer=document.getElementById("logged-items-container")
+  if (localStorage.getItem("nutriplan_daily_log")) {
+    const clearBtn = document.createElement("button");
+  clearBtn.classList.add(
+    "text-red-500",
+    "hover:text-red-600",
+    "text-sm",
+    "font-medium",
+  );
+  clearBtn.id = "clear-foodlog";
+  document.getElementById("log-count-and-clear-parent").appendChild(clearBtn);
+  clearBtn.innerHTML = `
+                                    <i class="mr-1" data-fa-i2svg=""><svg class="svg-inline--fa fa-trash" data-prefix="fas" data-icon="trash" role="img" viewBox="0 0 448 512" aria-hidden="true" data-fa-i2svg=""><path fill="currentColor" d="M136.7 5.9L128 32 32 32C14.3 32 0 46.3 0 64S14.3 96 32 96l384 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0-8.7-26.1C306.9-7.2 294.7-16 280.9-16L167.1-16c-13.8 0-26 8.8-30.4 21.9zM416 144L32 144 53.1 467.1C54.7 492.4 75.7 512 101 512L347 512c25.3 0 46.3-19.6 47.9-44.9L416 144z"></path></svg></i>Clear All
+                                `;
+  
+    const LogContainer = document.getElementById("logged-items-container");
 
-        LogContainer.innerHTML = "";
+    LogContainer.innerHTML = "";
 
-  let logItems = JSON.parse(localStorage.getItem("nutriplan_daily_log"));
-  Object.keys(logItems).forEach((day) => {
-    renderLoggedItems(logItems[day].meals);
-  });
-  }else{
-    let timeInDays= new Date().toLocaleString("en-US", {
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit"
-  }).split("/").join("-");
+    let logItems = JSON.parse(localStorage.getItem("nutriplan_daily_log"));
+    Object.keys(logItems).forEach((day) => {
+      renderLoggedItems(logItems[day].meals);
+    });
+  } else {
+    setProgressBar();
+    let timeInDays = new Date()
+      .toLocaleString("en-US", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      })
+      .split("/")
+      .join("-");
     let logItems = {};
     {
       logItems[timeInDays] = {
@@ -707,10 +739,11 @@ export function renderLoggedItems(timeInDays) {
   const LogContainer=document.getElementById("logged-items-container")
   LogContainer.classList.add("space-y-3", "max-h-96", "overflow-y-auto");
   LogContainer.classList.remove("text-center", "py-12");
-setProgressBar()
-  loggedCount.innerHTML=`Logged Items (${timeInDays.length})`
+  setProgressBar();
+  
+  loggedCount.innerHTML = `Logged Items (${timeInDays.length})`;
   timeInDays.forEach((element) => {
-    LogContainer.innerHTML += `<div class="flex items-center justify-between bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition-all">
+    LogContainer.innerHTML += `<div class="logged-item flex items-center justify-between bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition-all">
                         <div class="flex items-center gap-4">
                             <img src=${element.thumbnail} alt=${
                               element.name
@@ -720,9 +753,9 @@ setProgressBar()
                                   element.name
                                 }</p>
                                 <p class="text-sm text-gray-500">
-                                    ${element.type==="product"?element.brand:`${element.servingsValue} servings`} 
+                                    ${element.type === "product" ? element.brand : `${element.servingsValue} servings`} 
                                     <span class="mx-1">•</span>
-                                    <span class="${element.type==="product"?"text-blue-600":"text-emerald-600"}">${element.type==="product"?"Product":"Recipe"}</span>
+                                    <span class="${element.type === "product" ? "text-blue-600" : "text-emerald-600"}">${element.type === "product" ? "Product" : "Recipe"}</span>
                                 </p>
                                 <p class="text-xs text-gray-400 mt-1">${element.timeAdded}</p>
                             </div>
@@ -730,7 +763,7 @@ setProgressBar()
                         <div class="flex items-center gap-4">
                             <div class="text-right">
                                 <p class="text-lg font-bold text-emerald-600">${
-                                  element.servingsValue * element.calories 
+                                  element.servingsValue * element.calories
                                 }</p>
                                 <p class="text-xs text-gray-500">kcal</p>
                             </div>
@@ -753,5 +786,3 @@ setProgressBar()
 `;
   });
 }
-
-

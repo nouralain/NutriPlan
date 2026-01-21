@@ -26,8 +26,34 @@ import handleSections from "./hideSection.js";
 import Product from "./product-scanner/product-class.js";
 import { displayoggedItemsAtStart } from "./meals/meals-info.js";
 import FoodLog from './foodLog/foodLogClass.js';
+import openSideBar, { closeSideBar } from './openSideBarInMob.js';
+import handleGridBtn, { handleListBtn } from './handleGridBtn.js';
 
+const menuBtn=document.getElementById("header-menu-btn")
+menuBtn.addEventListener("click",()=>{
+  openSideBar()
+})
 
+document.getElementById("sidebar-close-btn").addEventListener("click",()=>{
+  closeSideBar()
+})
+
+const sideBarOverlay =document.getElementById("sidebar-overlay")
+sideBarOverlay.addEventListener("click",(e)=>{
+  if(e.target==sideBarOverlay){
+    closeSideBar()
+  }
+})
+
+const gridViewBtn = document.getElementById("grid-view-btn");
+    const listViewBtn = gridViewBtn.nextElementSibling;
+     gridViewBtn.addEventListener("click", () => {
+        handleGridBtn(gridViewBtn,listViewBtn)
+        })
+
+        listViewBtn.addEventListener("click", () => {
+        handleListBtn(gridViewBtn,listViewBtn)
+        })
 // showing the loading overlay when the page opened and before the data reciving
 document.getElementById("app-loading-overlay").style.display = "flex";
 displayoggedItemsAtStart()
@@ -76,7 +102,8 @@ products.handleSearchBarcode();
 navAnchor.forEach((link, index) => {
   link.addEventListener("click", () => {
     const route = link.dataset.route;
-
+    
+   closeSideBar();
     history.pushState({ section: route }, "", `?section=${route}`);
     handleSections(index);
 
@@ -99,13 +126,33 @@ scanBtn.addEventListener("click", () => {
   myfoodLog.handleLogBtns(scanBtn, 1);
 });
 
+const clearBtnTop=document.getElementById("clear-foodlog")
+const clearBtnsCards= document.querySelectorAll(".remove-foodlog-item")
+clearBtnTop.addEventListener("click",(e)=>{
+  myfoodLog.handleDeleteItems(e.target)
+})
+clearBtnsCards.forEach((btn)=>{
+  btn.addEventListener("click",()=>{
+    
+  })
+})
 
+const loggedItems = document.querySelectorAll(".logged-item")
+loggedItems.forEach((item , index)=>{
+  const trashBin= document.querySelector(".remove-foodlog-item")
+  trashBin.addEventListener("click",()=>{
+    const logItems= JSON.parse(localStorage.getItem("nutriplan_daily_log"))
+    console.log(index);
+    // logItems.splice(index, 1)
+    
+        // localStorage.setItem("items", JSON.stringify(logItems));
+
+  })
+})
 /**
    الناقص:
    1- تظبيط ستايل زراير ال كاتيجوري ف صفحه الميلز
-   2- تظبيط الفانكشناليتي بتاعت زراير الكاتيجوري ف صفحه البروداكتس
-   3- تغيير محتويات الهيدر حسب كل سيكشن
    4- تظبيط زرار ال ليست ف سكشن الميلز
-   6- لما اعمل لوج لوصفه اضرب الفاليو بتاعت ال انبوت ف الكالوريز وكل حاجه
-   7- لما اخرج من السكشن ارجع كل حاجه زي مكانت ف السكشن قبل مخرج منه
+   8- اهندل ال سويت اليرت
+   9- تظبيط ال فود لوج
    */
